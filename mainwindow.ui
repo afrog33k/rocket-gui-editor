@@ -16,7 +16,20 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QTextEdit" name="MainTextEdit"/>
+     <widget class="QTextEdit" name="MainTextEdit">
+      <property name="font">
+       <font>
+        <family>Source Code Pro</family>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="tabStopWidth">
+       <number>40</number>
+      </property>
+      <property name="acceptRichText">
+       <bool>false</bool>
+      </property>
+     </widget>
     </item>
     <item row="0" column="1">
      <widget class="QGraphicsView" name="graphicsView"/>
@@ -56,7 +69,7 @@
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0">
-      <widget class="QTextBrowser" name="textBrowser"/>
+      <widget class="QTextBrowser" name="LogBrowser"/>
      </item>
     </layout>
    </widget>
@@ -72,8 +85,26 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>menuBar</sender>
+   <signal>triggered(QAction*)</signal>
+   <receiver>CMainWindow</receiver>
+   <slot>LoadRMLDocument()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>15</x>
+     <y>5</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>6</x>
+     <y>49</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
  <slots>
   <slot>OpenRMLDocument(QString)</slot>
+  <slot>LoadRMLDocument()</slot>
  </slots>
 </ui>

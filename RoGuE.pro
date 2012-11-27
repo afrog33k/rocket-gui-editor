@@ -11,10 +11,13 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = RoGuE
 TEMPLATE = app
 
+CONFIG += console
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    rmlsyntaxhighlighter.cpp
 
-HEADERS  += mainwindow.hpp
+HEADERS  += mainwindow.hpp \
+    rmlsyntaxhighlighter.hpp
 
 FORMS    += mainwindow.ui

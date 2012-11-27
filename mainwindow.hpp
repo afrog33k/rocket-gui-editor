@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "rmlsyntaxhighlighter.hpp"
+
 namespace Ui {
 class CMainWindow;
 }
@@ -18,7 +20,10 @@ public:
 private:
     Ui::CMainWindow *ui;
 
-    void LoadRMLDocument(QString FileName);
+    CRMLSyntaxHighlighter* mHighlighter;
+
+private slots:
+    void LoadRMLDocument();
 };
 
 #endif // MAINWINDOW_HPP
