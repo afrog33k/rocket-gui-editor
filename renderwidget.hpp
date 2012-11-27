@@ -1,7 +1,7 @@
 /**********************************************************************************
  * License notice
  * ------------------------
- * rmlsyntaxhighlighter.hpp
+ * renderwidget.hpp
  * ------------------------
  * Copyright (c) 2012 Alexander Kasper (alexander.limubei.kasper@gmail.com)
  *
@@ -24,36 +24,41 @@
  *
  ***********************************************************************************/
 
-#ifndef RMLSYNTAXHIGHLIGHTER_HPP
-#define RMLSYNTAXHIGHLIGHTER_HPP
+#ifndef RENDERWIDGET_HPP
+#define RENDERWIDGET_HPP
 
-#include <QSyntaxHighlighter>
-#include <QTextDocument>
+#include <QGLWidget>
 
-class CRMLSyntaxHighlighter : public QSyntaxHighlighter
+#include <Rocket/Core.h>
+#include "ShellRenderInterfaceOpenGL.h"
+#include "qtsysteminterface.hpp"
+
+class CRenderWidget : public QGLWidget
 {
     Q_OBJECT
 public:
-    explicit CRMLSyntaxHighlighter(QTextDocument* parent = 0);
+    explicit CRenderWidget(QWidget *parent = 0);
+    ~CRenderWidget();
+
+    bool LoadDocument(QString FileName);
     
 protected:
-    void highlightBlock(const QString &text);
+    void initializeGL();
+    void resizeGL(int w, int h);
+    void paintGL();
+    void mousePressEvent(QMouseEvent *);
+    void mouseMoveEvent(QMouseEvent *);
+    void keyPressEvent(QKeyEvent *);
 
 private:
-    struct HighlightingRule
-    {
-        QRegExp mPattern;
-        QTextCharFormat mFormat;
-    };
-    QVector<HighlightingRule> mHighlightingRules;
+    Rocket::Core::Context* mGUIContext;
+    ShellRenderInterfaceOpenGL* mRenderInterface;
+    CQtSystemInterface* mSystemInterface;
 
-    QTextCharFormat mTagFormat;
-    QTextCharFormat mAttributeFormat;
-    QTextCharFormat mStringFormat;
-    QTextCharFormat mMultiLineCommentFormat;
-
-    QRegExp mCommentStartExpression;
-    QRegExp mCommentEndExpression;
+#ifdef WIN32
+    HDC device_context;
+    HGLRC render_context;
+#endif
 };
 
-#endif // RMLSYNTAXHIGHLIGHTER_HPP
+#endif // RENDERWIDGET_HPP

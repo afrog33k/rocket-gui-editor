@@ -14,7 +14,7 @@
    <string>RoGuE - Rocket GUI Editor</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout" columnminimumwidth="0">
     <item row="0" column="0">
      <widget class="QTextEdit" name="MainTextEdit">
       <property name="font">
@@ -30,9 +30,6 @@
        <bool>false</bool>
       </property>
      </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QGraphicsView" name="graphicsView"/>
     </item>
    </layout>
   </widget>
