@@ -32,18 +32,31 @@
 CRenderWidget::CRenderWidget(QWidget *parent) :
     QGLWidget(parent),
     mRenderInterface(new ShellRenderInterfaceOpenGL()),
-    mSystemInterface(new CQtSystemInterface())
+    mSystemInterface(new CQtSystemInterface()),
+    mCurrentDoc(NULL)
 {
     setMouseTracking(true);
     Rocket::Core::SetRenderInterface(mRenderInterface);
     Rocket::Core::SetSystemInterface(mSystemInterface);
 
     Rocket::Core::Initialise();
+    Rocket::Controls::Initialise();
+
+    Rocket::Core::FontDatabase::LoadFontFace("Delicious-Roman.otf");
+    Rocket::Core::FontDatabase::LoadFontFace("Delicious-Bold.otf");
+    Rocket::Core::FontDatabase::LoadFontFace("Delicious-Italic.otf");
+    Rocket::Core::FontDatabase::LoadFontFace("Delicious-BoldItalic.otf");
+    Rocket::Core::FontDatabase::LoadFontFace("SourceCodePro-Black.otf");
+    Rocket::Core::FontDatabase::LoadFontFace("SourceCodePro-Bold.otf");
+    Rocket::Core::FontDatabase::LoadFontFace("SourceCodePro-ExtraLight.otf");
+    Rocket::Core::FontDatabase::LoadFontFace("SourceCodePro-Light.otf");
+    Rocket::Core::FontDatabase::LoadFontFace("SourceCodePro-Regular.otf");
+    Rocket::Core::FontDatabase::LoadFontFace("SourceCodePro-Semibold.otf");
 
     qDebug("Creating Rocket context...");
     Rocket::Core::Vector2i size(width(), height());
     mGUIContext = Rocket::Core::CreateContext("Main", size);
-    Rocket::Controls::Initialise();
+
     Rocket::Debugger::Initialise(mGUIContext);
     Rocket::Debugger::SetVisible(true);
     qDebug("done!\n");
@@ -59,20 +72,21 @@ CRenderWidget::~CRenderWidget()
 
 bool CRenderWidget::LoadDocument(QString FileName)
 {
-
+    if(mCurrentDoc)
+        mGUIContext->UnloadDocument(mCurrentDoc);
     Rocket::Core::String fn(FileName.toAscii());
 
-    Rocket::Core::ElementDocument* doc = mGUIContext->LoadDocument(fn);
-    if(!doc)
+    mCurrentDoc = mGUIContext->LoadDocument(fn);
+    if(!mCurrentDoc)
     {
-        mGUIContext->UnloadAllDocuments();
+        return false;
     }
     else
-        doc->Show();
+        mCurrentDoc->Show();
 
     this->repaint();
 
-    return (doc != NULL);
+    return true;
 }
 
 void CRenderWidget::initializeGL()

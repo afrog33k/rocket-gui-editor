@@ -55,10 +55,7 @@ private:
     ShellRenderInterfaceOpenGL* mRenderInterface;
     CQtSystemInterface* mSystemInterface;
 
-#ifdef WIN32
-    HDC device_context;
-    HGLRC render_context;
-#endif
+    Rocket::Core::ElementDocument* mCurrentDoc;
 };
 
 #endif // RENDERWIDGET_HPP
