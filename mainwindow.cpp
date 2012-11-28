@@ -40,7 +40,7 @@ CMainWindow::CMainWindow(QWidget *parent) :
 
     mGUIVizDock = new QDockWidget("GUI Viz", this);
     mGUIVizDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    mRenderWidget = new CRenderWidget(ui->centralWidget);
+    mRenderWidget = new CRenderWidget(ui->LogBrowser, ui->centralWidget);
     mGUIVizDock->setWidget(mRenderWidget);
     mGUIVizDock->setMinimumWidth(400);
     addDockWidget(Qt::RightDockWidgetArea, mGUIVizDock);
@@ -65,7 +65,8 @@ void CMainWindow::LoadRMLDocument()
     QFile File(FileName);
     if (!File.open(QFile::ReadOnly))
     {
-        ui->LogBrowser->append("Couldn't open file!");
+        Rocket::Core::Log::Message(Rocket::Core::Log::LT_ERROR,
+                                   "Couldn't open file %s", FileName.toStdString().c_str());
         return;
     }
 

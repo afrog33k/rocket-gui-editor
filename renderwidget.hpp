@@ -28,16 +28,19 @@
 #define RENDERWIDGET_HPP
 
 #include <QGLWidget>
+#include <QTimer>
 
 #include <Rocket/Core.h>
 #include "ShellRenderInterfaceOpenGL.h"
 #include "qtsysteminterface.hpp"
 
+class QTextEdit;
+
 class CRenderWidget : public QGLWidget
 {
     Q_OBJECT
 public:
-    explicit CRenderWidget(QWidget *parent = 0);
+    explicit CRenderWidget(QTextEdit* LogWidget, QWidget *parent = 0);
     ~CRenderWidget();
 
     bool LoadDocument(QString FileName);
@@ -47,8 +50,10 @@ protected:
     void resizeGL(int w, int h);
     void paintGL();
     void mousePressEvent(QMouseEvent *);
+    void mouseReleaseEvent(QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *);
     void keyPressEvent(QKeyEvent *);
+    void keyReleaseEvent(QKeyEvent *);
 
 private:
     Rocket::Core::Context* mGUIContext;
@@ -56,6 +61,13 @@ private:
     CQtSystemInterface* mSystemInterface;
 
     Rocket::Core::ElementDocument* mCurrentDoc;
+
+    typedef std::map<Qt::Key, Rocket::Core::Input::KeyIdentifier> KeyIdentifierMapType;
+    KeyIdentifierMapType mKeyIdentifierMap;
+
+    QTimer mRenderTimer;
+
+    void BuildKeyMap();
 };
 
 #endif // RENDERWIDGET_HPP

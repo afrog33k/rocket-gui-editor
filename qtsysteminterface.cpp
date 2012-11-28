@@ -26,12 +26,49 @@
 
 #include "qtsysteminterface.hpp"
 
-CQtSystemInterface::CQtSystemInterface()
+CQtSystemInterface::CQtSystemInterface(QTextEdit* LogWidget)
+    : mLogWidget(LogWidget),
+      mLogDoc(new QTextDocument(LogWidget))
 {
     mTimer.start();
+    mLogWidget->setDocument(mLogDoc);
+
+    mWarnFormat.setForeground(QBrush(QColor::fromRgb(242,170,46)));
+    mWarnFormat.setFontItalic(true);
+    mErrFormat.setForeground(Qt::red);
+    mErrFormat.setFontWeight(QFont::Bold);
+    mInfoFormat.setForeground(Qt::black);
 }
 
 float CQtSystemInterface::GetElapsedTime()
 {
     return static_cast<float>(mTimer.elapsed());
+}
+
+bool CQtSystemInterface::LogMessage(Rocket::Core::Log::Type type,
+                                    const Rocket::Core::String &message)
+{
+    QTextCursor Cursor = mLogWidget->textCursor();
+    QString LogMessage;
+    switch(type)
+    {
+    case Rocket::Core::Log::LT_ERROR:
+        LogMessage = "ERROR:" + QString(message.CString());
+        LogMessage += QString("\n");
+        Cursor.insertText(LogMessage, mErrFormat);
+        break;
+    case Rocket::Core::Log::LT_WARNING:
+        LogMessage = "WARNING:" + QString(message.CString());
+        LogMessage += QString("\n");
+        Cursor.insertText(LogMessage, mWarnFormat);
+        break;
+    default: LogMessage = "INFO:" + QString(message.CString());
+        LogMessage += QString("\n");
+        Cursor.insertText(LogMessage, mInfoFormat);
+        break;
+    }
+
+    mLogWidget->setTextCursor(Cursor);
+
+    return true;
 }

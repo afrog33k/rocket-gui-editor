@@ -28,18 +28,27 @@
 #define QTSYSTEMINTERFACE_HPP
 
 #include <QElapsedTimer>
+#include <QTextEdit>
 
 #include <Rocket/Core/SystemInterface.h>
 
 class CQtSystemInterface : public Rocket::Core::SystemInterface
 {
 public:
-    CQtSystemInterface();
+    CQtSystemInterface(QTextEdit* LogWidget);
 
     virtual float GetElapsedTime();
 
+    virtual bool LogMessage(Rocket::Core::Log::Type type,
+                            const Rocket::Core::String& message);
+
 private:
     QElapsedTimer mTimer;
+    QTextEdit* mLogWidget;
+    QTextDocument* mLogDoc;
+    QTextCharFormat mWarnFormat;
+    QTextCharFormat mErrFormat;
+    QTextCharFormat mInfoFormat;
 };
 
 #endif // QTSYSTEMINTERFACE_HPP
