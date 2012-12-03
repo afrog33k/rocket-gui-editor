@@ -59,3 +59,6 @@ CONFIG( debug, debug|release ) {
 }
 
 message($$LIBS)
+
+win32:RC_FILE += \
+    Rogue.rc
