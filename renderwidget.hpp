@@ -43,7 +43,7 @@ public:
     explicit CRenderWidget(QTextEdit* LogWidget, QWidget *parent = 0);
     ~CRenderWidget();
 
-    bool LoadDocument(QString FileName);
+    bool LoadDocument(QString DocString, QString URL);
     
 protected:
     void initializeGL();
@@ -54,6 +54,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *);
     void keyPressEvent(QKeyEvent *);
     void keyReleaseEvent(QKeyEvent *);
+
 
 private:
     Rocket::Core::Context* mGUIContext;

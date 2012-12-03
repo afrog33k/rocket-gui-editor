@@ -59,7 +59,8 @@ void CMainWindow::LoadRMLDocument()
                                                     QString(), tr("RML-Files (*.rml);;All Files (*)"));
     if (!QFile::exists(FileName))
     {
-        ui->LogBrowser->append("File does not exist!");
+         Rocket::Core::Log::Message(Rocket::Core::Log::LT_ERROR,
+                                    "%s does not exist!", FileName.toStdString().c_str());
         return;
     }
     QFile File(FileName);
@@ -75,6 +76,53 @@ void CMainWindow::LoadRMLDocument()
     QString Str = Codec->toUnicode(Data);
     Str = QString::fromLocal8Bit(Data);
     ui->MainTextEdit->setPlainText(Str);
+    while(ui->mTextTabs->count() > 1)
+        ui->mTextTabs->removeTab(1);
+    ui->mTextTabs->setCurrentIndex(0);
+    mCurrentDir = QDir(FileName);
+    ui->mTextTabs->setTabText(0, mCurrentDir.dirName());
 
-    mRenderWidget->LoadDocument(FileName);
+    if(mRenderWidget->LoadDocument(Str, FileName))
+    {
+        // find RCSS links and load these as well
+        QString RCSSLinkTag = "text/rcss";
+
+        int Idx = Str.indexOf(RCSSLinkTag);
+        while(Idx >= 0 && Idx < Str.length())
+        {
+            QString RCSSFileName = Str.mid(Str.indexOf("href=", Idx)+6, Str.indexOf("/>", Idx)-Str.indexOf("href=", Idx)-7);
+
+            LoadRCSS(RCSSFileName);
+            Idx = Str.indexOf(RCSSLinkTag, Idx+RCSSLinkTag.length());
+        }
+    }
+}
+
+void CMainWindow::LoadRCSS(QString FilePath)
+{
+    QString AbsFilePath = QFileInfo(mCurrentDir.absolutePath()).absoluteDir().absolutePath() + "/" + FilePath;
+    if(!QFile::exists(AbsFilePath))
+    {
+         Rocket::Core::Log::Message(Rocket::Core::Log::LT_ERROR,
+                                    "%s does not exist!", AbsFilePath.toStdString().c_str());
+        return;
+    }
+
+    QFile File(AbsFilePath);
+    if (!File.open(QFile::ReadOnly))
+    {
+        Rocket::Core::Log::Message(Rocket::Core::Log::LT_ERROR,
+                                   "Couldn't open file %s", AbsFilePath.toStdString().c_str());
+        return;
+    }
+
+    QByteArray Data = File.readAll();
+    QTextCodec *Codec = Qt::codecForHtml(Data);
+    QString Str = Codec->toUnicode(Data);
+    Str = QString::fromLocal8Bit(Data);
+
+    QTextEdit* RCSSWidget = new QTextEdit(this);
+    RCSSWidget->setPlainText(Str);
+    QDir tmp(FilePath);
+    ui->mTextTabs->addTab(RCSSWidget, tmp.dirName());
 }

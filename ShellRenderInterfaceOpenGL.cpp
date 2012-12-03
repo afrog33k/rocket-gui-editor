@@ -236,6 +236,6 @@ bool ShellRenderInterfaceOpenGL::GenerateTexture(Rocket::Core::TextureHandle& te
 // Called by Rocket when a loaded texture is no longer required.		
 void ShellRenderInterfaceOpenGL::ReleaseTexture(Rocket::Core::TextureHandle texture_handle)
 {
-	glDeleteTextures(1, (GLuint*) &texture_handle);
+    glDeleteTextures(1, (GLuint*) &texture_handle);
 }
 

@@ -16,19 +16,45 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QTextEdit" name="MainTextEdit">
-      <property name="font">
-       <font>
-        <family>Source Code Pro</family>
-        <pointsize>10</pointsize>
-       </font>
+     <widget class="QTabWidget" name="mTextTabs">
+      <property name="tabPosition">
+       <enum>QTabWidget::North</enum>
       </property>
-      <property name="tabStopWidth">
-       <number>40</number>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
       </property>
-      <property name="acceptRichText">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="usesScrollButtons">
        <bool>false</bool>
       </property>
+      <property name="documentMode">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="RML">
+       <attribute name="title">
+        <string>New</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QTextEdit" name="MainTextEdit">
+          <property name="font">
+           <font>
+            <family>Source Code Pro</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="tabStopWidth">
+           <number>40</number>
+          </property>
+          <property name="acceptRichText">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>

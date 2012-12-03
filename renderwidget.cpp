@@ -28,6 +28,7 @@
 
 #include <Rocket/Controls.h>
 #include <Rocket/Debugger.h>
+#include <Rocket/Core/StreamMemory.h>
 
 #include <QDir>
 #include <QMouseEvent>
@@ -92,7 +93,7 @@ CRenderWidget::CRenderWidget(QTextEdit* LogWidget, QWidget* parent) :
     RC::Log::Message(RC::Log::LT_INFO, "done!\n");
 
     connect(&mRenderTimer, SIGNAL(timeout()), this, SLOT(update()));
-    mRenderTimer.start(20);
+    mRenderTimer.start();
 }
 
 CRenderWidget::~CRenderWidget()
@@ -104,8 +105,8 @@ CRenderWidget::~CRenderWidget()
     if(mCurrentDoc != NULL)
     {
         mCurrentDoc->Close();
-        mGUIContext->UnloadAllDocuments();
         mCurrentDoc->RemoveReference();
+        mGUIContext->UnloadAllDocuments();
     }
 
     mGUIContext->RemoveReference();
@@ -116,20 +117,27 @@ CRenderWidget::~CRenderWidget()
     delete mSystemInterface;
 }
 
-bool CRenderWidget::LoadDocument(QString FileName)
+bool CRenderWidget::LoadDocument(QString DocString, QString URL)
 {
     if(mCurrentDoc)
     {
         mCurrentDoc->Close();
-        mGUIContext->UnloadDocument(mCurrentDoc);
         mCurrentDoc->RemoveReference();
+        mGUIContext->UnloadDocument(mCurrentDoc);
     }
 
-    Rocket::Core::String fn(FileName.toAscii());
+    Rocket::Core::String fn(DocString.toAscii());
+    Rocket::Core::String URLStr(URL.replace(':', '|').toAscii());
 
-    mCurrentDoc = mGUIContext->LoadDocument(fn);
+    Rocket::Core::StreamMemory* DocStream = new Rocket::Core::StreamMemory((Rocket::Core::byte*)fn.CString(), fn.Length());
+    DocStream->SetSourceURL(Rocket::Core::URL(URLStr));
+
+    mCurrentDoc = mGUIContext->LoadDocument(DocStream);
     if(!mCurrentDoc)
     {
+        DocStream->RemoveReference();
+        Rocket::Core::Log::Message(Rocket::Core::Log::LT_ERROR,
+                                   "Couldn't load document!");
         return false;
     }
     else
@@ -138,6 +146,7 @@ bool CRenderWidget::LoadDocument(QString FileName)
     mGUIContext->Update();
     update();
 
+    DocStream->RemoveReference();
     return true;
 }
 
@@ -201,6 +210,12 @@ void CRenderWidget::mouseMoveEvent(QMouseEvent* evt)
 void CRenderWidget::keyPressEvent(QKeyEvent* evt)
 {
     mGUIContext->ProcessKeyDown(mKeyIdentifierMap[(Qt::Key)evt->key()], GetKeyModifierState(evt->modifiers()));
+    if(evt->text().data()->toAscii() >= 32)
+    {
+        mGUIContext->ProcessTextInput(Rocket::Core::String(evt->text().toStdString().c_str()));
+    }
+    else if(evt->key() == (int)Qt::Key_Return)
+        mGUIContext->ProcessTextInput((Rocket::Core::word)'\n');
 }
 
 void CRenderWidget::keyReleaseEvent(QKeyEvent* evt)

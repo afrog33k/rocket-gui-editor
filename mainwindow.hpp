@@ -28,6 +28,7 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <QDir>
 
 #include "rmlsyntaxhighlighter.hpp"
 #include "renderwidget.hpp"
@@ -51,6 +52,10 @@ private:
 
     CRenderWidget* mRenderWidget;
     QDockWidget* mGUIVizDock;
+
+    QDir mCurrentDir;
+
+    void LoadRCSS(QString FilePath);
 
 private slots:
     void LoadRMLDocument();
