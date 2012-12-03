@@ -74,7 +74,16 @@
     </property>
     <addaction name="actionOpen"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionVisualization"/>
+    <addaction name="actionLog"/>
+    <addaction name="actionShow_Hide_Debugger"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -88,7 +97,7 @@
   <widget class="QDockWidget" name="LogWidget">
    <property name="minimumSize">
     <size>
-     <width>89</width>
+     <width>111</width>
      <height>111</height>
     </size>
    </property>
@@ -97,6 +106,12 @@
      <width>0</width>
      <height>0</height>
     </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>Log</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -121,27 +136,46 @@
     <string>Ctrl+O</string>
    </property>
   </action>
+  <action name="actionVisualization">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Visualization</string>
+   </property>
+  </action>
+  <action name="actionLog">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Log</string>
+   </property>
+  </action>
+  <action name="actionShow_Hide_Debugger">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show/Hide Debugger</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections>
-  <connection>
-   <sender>menuBar</sender>
-   <signal>triggered(QAction*)</signal>
-   <receiver>CMainWindow</receiver>
-   <slot>LoadRMLDocument()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>15</x>
-     <y>5</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>6</x>
-     <y>49</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>OpenRMLDocument(QString)</slot>
   <slot>LoadRMLDocument()</slot>

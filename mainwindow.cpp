@@ -31,6 +31,8 @@
 #include <QTextCodec>
 #include <QFileDialog>
 
+#include <Rocket/Debugger.h>
+
 CMainWindow::CMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::CMainWindow)
@@ -40,17 +42,75 @@ CMainWindow::CMainWindow(QWidget *parent) :
 
     mGUIVizDock = new QDockWidget("GUI Viz", this);
     mGUIVizDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    mGUIVizDock->setWindowTitle("RocketViz");
     mRenderWidget = new CRenderWidget(ui->LogBrowser, ui->centralWidget);
     mGUIVizDock->setWidget(mRenderWidget);
     mGUIVizDock->setMinimumWidth(400);
     addDockWidget(Qt::RightDockWidgetArea, mGUIVizDock);
+
+    // handle close events manually to just hide them
+    mGUIVizDock->installEventFilter(this);
+    ui->LogWidget->installEventFilter(this);
+
+    connect(ui->actionLog, SIGNAL(toggled(bool)), this, SLOT(ToggleLog(bool)));
+    connect(ui->actionVisualization, SIGNAL(toggled(bool)), this, SLOT(ToggleViz(bool)));
+    connect(ui->actionShow_Hide_Debugger, SIGNAL(toggled(bool)), this, SLOT(ToggleDebugger(bool)));
+
+    connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(LoadRMLDocument()));
 }
 
 CMainWindow::~CMainWindow()
 {
+    mGUIVizDock->removeEventFilter(this);
+    ui->LogWidget->removeEventFilter(this);
     delete ui;
     delete mHighlighter;
     delete mRenderWidget;
+}
+
+bool CMainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if(event->type() == QEvent::Close)
+    {
+        if(obj == mGUIVizDock)
+        {
+            mGUIVizDock->hide();
+            ui->actionVisualization->setChecked(false);
+            return true;
+        }
+        else if(obj == ui->LogWidget)
+        {
+            ui->LogWidget->hide();
+            ui->actionLog->setChecked(false);
+            return true;
+        }
+        else return QObject::eventFilter(obj, event);
+    }
+    else return QObject::eventFilter(obj, event);
+}
+
+void CMainWindow::ToggleLog(bool toggle)
+{
+    if(toggle)
+        ui->LogWidget->show();
+    else
+        ui->LogWidget->hide();
+}
+
+void CMainWindow::ToggleViz(bool toggle)
+{
+    if(toggle)
+        mGUIVizDock->show();
+    else
+        mGUIVizDock->hide();
+}
+
+void CMainWindow::ToggleDebugger(bool toggle)
+{
+    if(toggle)
+        Rocket::Debugger::SetVisible(true);
+    else
+        Rocket::Debugger::SetVisible(false);
 }
 
 void CMainWindow::LoadRMLDocument()

@@ -57,8 +57,13 @@ private:
 
     void LoadRCSS(QString FilePath);
 
+    bool eventFilter(QObject* obj, QEvent* event);
+
 private slots:
     void LoadRMLDocument();
+    void ToggleLog(bool);
+    void ToggleViz(bool);
+    void ToggleDebugger(bool);
 };
 
 #endif // MAINWINDOW_HPP
